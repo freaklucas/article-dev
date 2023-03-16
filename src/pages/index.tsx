@@ -27,6 +27,14 @@ export default function Home() {
           <br /> dos 
           seus artigos
         </h1>
+        <div className={styles.ifoContent}>
+          <section className={styles.box}>
+            <span>+12 artigos</span>
+          </section>
+          <section className={styles.box}>
+            <span>+16 comentários</span>
+          </section>
+        </div>
       </main>
     </div>
   );

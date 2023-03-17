@@ -1,9 +1,19 @@
 import Link from "next/link";
 import styles from "./styles.module.css";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useState } from "react";
 
 export function Header() {
+  const [hover, setHover] = useState(false);
   const { data: session, status } = useSession();
+
+  const handleMouseEnter = () => {
+    setHover(true);
+  }
+  const handleMouseLeave = () => {
+    setHover(false);
+  }
+
   return (
     <header className={styles.header}>
       <section className={styles.content}>
@@ -14,26 +24,26 @@ export function Header() {
               <span>+</span>
             </h1>
           </Link>
-          {
-            session?.user && (
-                <Link className={styles.link} href="/dashboard">
-                Meu painel
-              </Link>
-            )
-          }
+          {session?.user && (
+            <Link className={styles.link} href="/dashboard">
+              Meu painel
+            </Link>
+          )}
         </nav>
         {status === "loading" ? (
-            <>Loading...</>
+          <>Loading...</>
         ) : session ? (
           <button 
             className={styles.loginButton} 
             onClick={() => signOut()}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            Olá {session?.user?.name}
+           { hover ? 'Clique para sair' :  `Olá ${session?.user?.name}`}
           </button>
         ) : (
-          <button 
-            className={styles.loginButton} 
+          <button
+            className={styles.loginButton}
             onClick={() => signIn("google")}
           >
             Acessar

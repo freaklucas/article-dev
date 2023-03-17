@@ -37,7 +37,7 @@
     color: #fff;
     border: 1.5px solid #fff;
     cursor: pointer;
-    transition: all 0.8s;
+    transition: all 1.5s;
 }
 
 .loginButton:hover {

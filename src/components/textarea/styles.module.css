@@ -1,0 +1,10 @@
+.textArea {
+    width: 100%;
+    resize: none;
+    height: 160px;
+    outline: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-family: Roboto;
+
+}

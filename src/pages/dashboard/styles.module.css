@@ -1,0 +1,63 @@
+.container {
+    width: 100%;
+    font-family: Roboto;
+}
+
+.content {
+    background-color: #0f0f0f;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contentForm {
+    max-width:  1024px;
+    width: 100%;
+    padding: 0 18px;
+    padding-bottom: 28px;
+    margin-top: 58px;
+}
+
+.title {
+    color: #fff;
+    margin-top: 8px;
+    margin-bottom: 28px;
+    font-family: Roboto, 'Courier New', Courier, monospace;
+    font-size: 25px;
+}
+
+.checkboxArea label {
+    margin-left: 8px;
+    color: #fff;
+    font-family: monospace;
+}
+
+.checkbox { 
+    width: 20px;
+    height: 20px;
+    margin: 14px 0;
+    border-radius: 8px;
+    border: 2.5px solid #fff;
+    cursor: pointer;
+    transition: all 1.5s;
+
+}
+
+.button {
+    background-color: transparent;
+    padding: 8px 32px;
+    border-radius: 4px;
+    color: #2e8b57;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.8s;
+    width: 100%;
+  }
+  
+  .button:hover {
+    background-color: #2e8b57;
+    color: #0f0f0f;
+    font-weight: 600;
+    border: 0;
+  }

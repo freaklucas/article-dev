@@ -2,6 +2,7 @@ import { GetServerSideProps } from "next";
 import styles from "./styles.module.css";
 import Head from "next/head";
 import { getSession } from "next-auth/react";
+import { TextArea } from "@/components/textarea"; 
 
 export default function Dashboard() {
   return (
@@ -9,7 +10,35 @@ export default function Dashboard() {
       <Head>
         <title>Painel de tarefas</title>
       </Head>
-      <h1>Página painel</h1>
+      <main className={styles.main}>
+        <section className={styles.content}>
+          <div className={styles.contentForm}>
+            <h1 className={styles.title}>
+              Qual título do artigo?
+            </h1>
+            <form>
+              <TextArea
+                placeholder="Digite em markdown seu artigo"
+              />
+              <div className={styles.checkboxArea}>
+                <input
+                  type="checkbox"
+                  className={styles.checkbox}
+                />
+                <label>
+                  Deixar artigo público?
+                </label>
+              </div>
+              <button 
+                type="submit" 
+                className={styles.button}
+              >
+                Registrar
+              </button>
+            </form>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

@@ -6,9 +6,18 @@ import { getSession } from "next-auth/react";
 import { TextArea } from "@/components/textarea"; 
 import { FiShare2 } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
-
+import { ChangeEvent, useState } from "react";
 
 export default function Dashboard() {
+  const [input, setInput] = useState("");
+  const [publicArticle, setPublicArticle] = useState(false);
+
+  function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
+    console.log(event.target.checked);
+
+    setPublicArticle(event.target.checked);
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -22,10 +31,17 @@ export default function Dashboard() {
             </h1>
             <form>
               <TextArea
+                value={input}
+                onChange={
+                  (event: ChangeEvent<HTMLTextAreaElement>) => 
+                    setInput(event.target.value)
+                }
                 placeholder="Digite em markdown seu artigo"
               />
               <div className={styles.checkboxArea}>
                 <input
+                  checked={publicArticle}
+                  onChange={handleChangePublic}
                   type="checkbox"
                   className={styles.checkbox}
                 />

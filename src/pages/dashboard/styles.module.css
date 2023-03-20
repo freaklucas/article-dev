@@ -120,10 +120,11 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    white-space: pre-wrap;
   }
 
   .articleContent p {
-    white-space: pre-wrap;
+    
   }
 
   .trashButton {

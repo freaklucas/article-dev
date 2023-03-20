@@ -5,8 +5,11 @@ import Head from "next/head";
 import { getSession } from "next-auth/react";
 import { TextArea } from "@/components/textarea"; 
 import { FiShare2 } from "react-icons/fi";
+
 import { FaTrash } from "react-icons/fa";
 import { ChangeEvent, FormEvent, useState } from "react";
+import ReactMarkdown from 'react-markdown';
+
 
 export default function Dashboard() {
   const [input, setInput] = useState("");
@@ -68,6 +71,7 @@ export default function Dashboard() {
         </section>
         <section className={styles.articleContainer}>
           <h1>Meus artigos</h1>
+
           <article className={styles.article}>
             <div className={styles.tagContainer}>
               <label className={styles.tag}>PUBLICO</label>
@@ -79,7 +83,11 @@ export default function Dashboard() {
               </button>
             </div>
             <div className={styles.articleContent}>
-              <p>Meu artigo base: foi assim...</p>
+              <div className={styles.markdownPreview}>
+                <ReactMarkdown>
+                  {input}
+                </ReactMarkdown>
+              </div>
               <button className={styles.trashButton}>
               <FaTrash
                   size={22}

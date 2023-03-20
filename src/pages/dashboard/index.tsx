@@ -6,16 +6,25 @@ import { getSession } from "next-auth/react";
 import { TextArea } from "@/components/textarea"; 
 import { FiShare2 } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function Dashboard() {
   const [input, setInput] = useState("");
   const [publicArticle, setPublicArticle] = useState(false);
 
   function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
-    console.log(event.target.checked);
-
     setPublicArticle(event.target.checked);
+  }
+
+  function handleRegisterArticle(event: FormEvent) {
+    event.preventDefault();
+    if (!input.trim()) {
+      alert("Por favor, digite algo no campo TextArea.");
+      return;
+    }
+    
+    alert("oi/!");
+    console.log(input);
   }
 
   return (
@@ -29,12 +38,11 @@ export default function Dashboard() {
             <h1 className={styles.title}>
               Qual título do artigo?
             </h1>
-            <form>
+            <form onSubmit={handleRegisterArticle}>
               <TextArea
                 value={input}
                 onChange={
-                  (event: ChangeEvent<HTMLTextAreaElement>) => 
-                    setInput(event.target.value)
+                  (event: ChangeEvent<HTMLTextAreaElement>) => setInput(event.target.value)
                 }
                 placeholder="Digite em markdown seu artigo"
               />

@@ -121,10 +121,8 @@
     justify-content: space-between;
     width: 100%;
     white-space: pre-wrap;
-  }
 
-  .articleContent p {
-    
+    margin-top: 29px;
   }
 
   .trashButton {

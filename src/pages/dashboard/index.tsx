@@ -10,8 +10,16 @@ import { FaTrash } from "react-icons/fa";
 import { ChangeEvent, FormEvent, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 
+import { db } from "@/services/firebaseConnection";
+import { addDoc, collection } from "firebase/firestore";
 
-export default function Dashboard() {
+interface DashboardProps {
+  user: {
+    email: string;
+  }
+}
+
+export default function Dashboard({ user }: DashboardProps) {
   const [input, setInput] = useState("");
   const [publicArticle, setPublicArticle] = useState(false);
 
@@ -19,15 +27,27 @@ export default function Dashboard() {
     setPublicArticle(event.target.checked);
   }
 
-  function handleRegisterArticle(event: FormEvent) {
+  async function handleRegisterArticle(event: FormEvent) {
     event.preventDefault();
     if (!input.trim()) {
       alert("Por favor, digite algo no campo TextArea.");
       return;
     }
     
-    alert("oi/!");
-    console.log(input);
+    try {
+      await addDoc(collection(db, "articles"), {
+        article: input,
+        created: new Date(),
+        user: user?.email,
+        public: publicArticle
+      });
+
+      setInput("");
+      setPublicArticle(false);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   return (
@@ -116,6 +136,10 @@ export const getServerSideProps:
   }
 
   return {
-    props: {},
+    props: {
+      user: {
+        email: session?.user?.email
+      }
+    },
   };
 };

@@ -18,7 +18,11 @@ import {
   orderBy,
   where,
   onSnapshot,
+  doc,
+  deleteDoc
 } from "firebase/firestore";
+
+import Link from "next/link";
 
 interface DashboardProps {
   user: {
@@ -93,6 +97,20 @@ export default function Dashboard({ user }: DashboardProps) {
     }
   }
 
+  async function handleShare(id: string) {
+    await navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_URL}/article/${id}`
+    );
+
+    alert('Url copiada com sucesso!');
+  }
+
+  async function handleDeleteArticle(id: string) {
+    const docRef = doc(db, "articles", id);
+    await deleteDoc(docRef);
+  }
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -119,7 +137,11 @@ export default function Dashboard({ user }: DashboardProps) {
                 />
                 <label>Deixar artigo público?</label>
               </div>
-              <button type="submit" className={styles.button}>
+              <button
+                type="submit"
+                className={styles.button}
+                disabled={input === ""}
+              >
                 Registrar
               </button>
             </form>
@@ -130,23 +152,32 @@ export default function Dashboard({ user }: DashboardProps) {
 
           {articles.map((article) => (
             <article key={article.id} className={styles.article}>
-              
               {article.public && (
                 <div className={styles.tagContainer}>
-                  <label className={styles.tag}>PUBLICO</label>
-                  <button className={styles.shareButton}>
+                  <label className={styles.tag}>PÚBLICO</label>
+                  <button 
+                    onClick={() => handleShare(article.id)}
+                    className={styles.shareButton}
+                  >
                     <FiShare2 size={22} color="#3183ff" />
                   </button>
                 </div>
               )}
-              
+
               <div className={styles.articleContent}>
                 <div className={styles.markdownPreview}>
-                  <ReactMarkdown>
-                    {article.article}
-                  </ReactMarkdown>
+                  {article.public ? (
+                    <Link href={`/article/${article.id}`}>
+                      <ReactMarkdown>{article.article}</ReactMarkdown>
+                    </Link>
+                  ) : (
+                    <ReactMarkdown>{article.article}</ReactMarkdown>
+                  )}
                 </div>
-                <button className={styles.trashButton}>
+                <button 
+                  className={styles.trashButton}
+                  onClick={() => handleDeleteArticle(article.id)}
+                >
                   <FaTrash size={22} color="#ea3140" />
                 </button>
               </div>

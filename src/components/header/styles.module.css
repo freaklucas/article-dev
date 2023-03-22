@@ -59,4 +59,13 @@
   padding: 4px 14px;
   border-radius: 4px;
   margin: 0 14px;
+  transition: all 1.5s;
+}
+
+
+.link:hover {
+  background-color: #FF6347;
+  color: #fff;
+  transform: scale(1.08);
+  font-size: 16px;
 }

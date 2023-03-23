@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
 import { doc, collection, query, getDoc, where } from "firebase/firestore";
+import { TextArea } from "@/components/textarea";
 
 interface ArticleProps {
   item: {
@@ -22,10 +23,23 @@ export default function Article({item}: ArticleProps) {
 
       <main className={styles.main}>
         <h1>Article</h1>
-        <article>
+        <article className={styles.article}>
           <p>Artigo: {item.article}</p>
         </article>
       </main>
+
+      <section className={styles.commentsContainer}>
+        <h2>Fazer um comentário</h2>
+        <form>
+          <TextArea
+            placeholder="Digite seu comentário..." 
+          />
+        </form>
+        <button className={styles.button}>
+          Enviar o comentário
+        </button>
+      </section>
+
     </div>
   );
 }

@@ -61,3 +61,8 @@
     background-color: #005fee;
     transition: all 0.5s;
 }
+
+.button:disabled {
+    cursor: not-allowed;
+    background-color: #d0daeb;
+}

@@ -93,6 +93,11 @@
     padding: 14px;
   }
 
+  .article:hover {
+    transition: all 0.5s;
+    transform: scale(1.01);
+  }
+
   .tagContainer {
     display: flex;
     align-items: center;

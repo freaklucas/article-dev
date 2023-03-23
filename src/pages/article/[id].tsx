@@ -4,15 +4,27 @@ import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
 import { doc, collection, query, getDoc, where } from "firebase/firestore";
 
-export default function Article() {
+interface ArticleProps {
+  item: {
+    article: string;
+    created: string;
+    public: boolean;
+    articleId: string;
+  }
+}
+
+export default function Article({item}: ArticleProps) {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Detalhes da tarefa</title>
+        <title>Artigo "{item.article}"</title>
       </Head>
 
       <main className={styles.main}>
         <h1>Article</h1>
+        <article>
+          <p>Artigo: {item.article}</p>
+        </article>
       </main>
     </div>
   );
@@ -50,7 +62,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     articleId: id
   }
 
+  console.log(articles)
+
   return {
-    props: {},
+    props: {
+      item: articles
+    },
   };
 };

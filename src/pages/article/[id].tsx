@@ -73,8 +73,9 @@ export default function Article({ item, allComments }: ArticleProps) {
     try {
       const docRef = doc(db, "comments", id);
       await deleteDoc(docRef);
-      console.log(docRef);
-      alert('Deletado!');
+      const deleteComment = comments.filter((item) => item.id !== id);
+      setComments(deleteComment);
+
     } catch (error) {
       console.log(error);
     }
@@ -125,7 +126,7 @@ export default function Article({ item, allComments }: ArticleProps) {
                 <button 
                   onClick={() => handleDeleteComment(item.id)}
                   className={styles.buttonTrash}
-                >
+                > 
                   <FaTrash size={18} color="#ea3140" />
                 </button>
               )}

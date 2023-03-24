@@ -2,7 +2,7 @@ import Head from "next/head";
 import styles from "./styles.module.css";
 import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
-import { doc, collection, query, getDoc, where, addDoc } from "firebase/firestore";
+import { doc, collection, query, getDoc, where, addDoc, getDocs } from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -13,29 +13,39 @@ interface ArticleProps {
     created: string;
     public: boolean;
     articleId: string;
-  }
+  };
+  allComments: CommentProps[];
+}
+interface CommentProps {
+  id: string;
+  comment: string;
+  articleId: string;
+  user: string;
+  name: string;
 }
 
-export default function Article({item}: ArticleProps) {
+export default function Article({item, allComments}: ArticleProps) {
   const { data: session} = useSession();
-  const [comments, setComments] = useState("");
+  const [input, setInput] = useState("");
+  const [comments, setComments] = useState<CommentProps[]>(allComments || []);
+
 
   async function handleRegisterComment(event: FormEvent) {
     event.preventDefault();
     
-    if(comments === '') return;
+    if(input === '') return;
     if (!session?.user?.email || !session?.user?.name) return;
-    console.log(comments)
+    console.log(input)
     try {
       const docRef = await addDoc(collection(db, "comments"), {
-        comment: comments,
+        comment: input,
         created: new Date(),
         user: session?.user?.email,
         name: session?.user?.name,
         articleId: item?.articleId,
       });
 
-      setComments("");
+      setInput("");
     } catch (err) {
       console.log(err);
     }
@@ -60,9 +70,9 @@ export default function Article({item}: ArticleProps) {
         <h2>Fazer um comentário</h2>
         <form onSubmit={handleRegisterComment}>
           <TextArea
-            value={comments}
+            value={input}
             onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-              setComments(event.target.value)
+              setInput(event.target.value)
             }
             placeholder="Digite seu comentário..." 
           />
@@ -75,7 +85,17 @@ export default function Article({item}: ArticleProps) {
           Enviar o comentário
         </button>
       </section>
-
+      <section className={styles.commentsContainer}>
+        <h2>Todos os comentários</h2>
+        {comments.length === 0 && (
+          <span>Nenhum comentário foi encontrado!</span>
+        )}
+        {comments.map((item) => (
+          <article className={styles.comment} key={item.id}>
+            <p>{item.comment}</p>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }
@@ -83,8 +103,25 @@ export default function Article({item}: ArticleProps) {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const id = params?.id as string;
   const docRef = doc(db, "articles", id);
-  const snapshot = await getDoc(docRef);
 
+  const q = query(collection(db, "comments"), where("articleId", "==", id));
+  const snapshotComments = getDocs(q);
+
+  let allComments: CommentProps[] = [];
+  snapshotComments.then((docs) => {
+    docs.forEach((doc) => {
+      allComments.push({
+        id: doc.id,
+        comment: doc.data().comment,
+        user: doc.data().user,
+        name: doc.data().name,
+        articleId: doc.data().articleId
+      });
+    });
+  });
+  
+  console.log(allComments)
+  const snapshot = await getDoc(docRef);
   if (snapshot.data() === undefined) {
     return {
       redirect: {
@@ -116,7 +153,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      item: articles
+      item: articles,
+      allComments: allComments,
     },
   };
 };

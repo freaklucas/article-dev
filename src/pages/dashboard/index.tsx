@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import styles from "./styles.module.css";
 import Head from "next/head";
 
@@ -9,7 +9,6 @@ import { FiShare2 } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-
 import { db } from "@/services/firebaseConnection";
 import {
   addDoc,
@@ -20,6 +19,7 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
+  getDocs
 } from "firebase/firestore";
 
 import Link from "next/link";
@@ -219,3 +219,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     },
   };
 };
+
+
+export const getStaticProps: GetStaticProps = async () => {
+  const commentRef = collection(db, "comments");
+  const commentSnapshot = await getDocs(commentRef);
+
+  const postRef = collection(db, "articles");
+  const postSnapshot = await getDocs(postRef);
+
+  return {
+    props: {
+      posts: postSnapshot.size || 0,
+      comments: commentSnapshot.size || 0,
+    }
+  }
+}

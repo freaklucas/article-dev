@@ -2,10 +2,20 @@ import Head from "next/head";
 import styles from "./styles.module.css";
 import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
-import { doc, collection, query, getDoc, where, addDoc, getDocs } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  query,
+  getDoc,
+  where,
+  addDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
+import { FaTrash } from "react-icons/fa";
 
 interface ArticleProps {
   item: {
@@ -24,18 +34,17 @@ interface CommentProps {
   name: string;
 }
 
-export default function Article({item, allComments}: ArticleProps) {
-  const { data: session} = useSession();
+export default function Article({ item, allComments }: ArticleProps) {
+  const { data: session } = useSession();
   const [input, setInput] = useState("");
   const [comments, setComments] = useState<CommentProps[]>(allComments || []);
 
-
   async function handleRegisterComment(event: FormEvent) {
     event.preventDefault();
-    
-    if(input === '') return;
+
+    if (input === "") return;
     if (!session?.user?.email || !session?.user?.name) return;
-    console.log(input)
+    console.log(input);
     try {
       const docRef = await addDoc(collection(db, "comments"), {
         comment: input,
@@ -45,12 +54,32 @@ export default function Article({item, allComments}: ArticleProps) {
         articleId: item?.articleId,
       });
 
+      const newComments = {
+        id: docRef.id,
+        comment: input,
+        user: session?.user?.email,
+        name: session?.user?.name,
+        articleId: item?.articleId,
+      };
+
+      setComments((oldItems) => [...oldItems, newComments]);
       setInput("");
     } catch (err) {
       console.log(err);
     }
   }
-  
+
+  async function handleDeleteComment(id: string) {
+    try {
+      const docRef = doc(db, "comments", id);
+      await deleteDoc(docRef);
+      console.log(docRef);
+      alert('Deletado!');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -64,9 +93,7 @@ export default function Article({item, allComments}: ArticleProps) {
         </article>
       </main>
 
-      <section 
-        className={styles.commentsContainer}
-      >
+      <section className={styles.commentsContainer}>
         <h2>Fazer um comentário</h2>
         <form onSubmit={handleRegisterComment}>
           <TextArea
@@ -74,10 +101,10 @@ export default function Article({item, allComments}: ArticleProps) {
             onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
               setInput(event.target.value)
             }
-            placeholder="Digite seu comentário..." 
+            placeholder="Digite seu comentário..."
           />
         </form>
-        <button 
+        <button
           disabled={!session?.user}
           className={styles.button}
           onClick={handleRegisterComment}
@@ -92,6 +119,17 @@ export default function Article({item, allComments}: ArticleProps) {
         )}
         {comments.map((item) => (
           <article className={styles.comment} key={item.id}>
+            <div className={styles.headComment}>
+              <label className={styles.commentsLabel}>{item.name}</label>
+              {item.user === session?.user?.email && (
+                <button 
+                  onClick={() => handleDeleteComment(item.id)}
+                  className={styles.buttonTrash}
+                >
+                  <FaTrash size={18} color="#ea3140" />
+                </button>
+              )}
+            </div>
             <p>{item.comment}</p>
           </article>
         ))}
@@ -115,12 +153,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         comment: doc.data().comment,
         user: doc.data().user,
         name: doc.data().name,
-        articleId: doc.data().articleId
+        articleId: doc.data().articleId,
       });
     });
   });
-  
-  console.log(allComments)
+
+  console.log(allComments);
   const snapshot = await getDoc(docRef);
   if (snapshot.data() === undefined) {
     return {
@@ -131,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 
-  if(!snapshot.data()?.public) {
+  if (!snapshot.data()?.public) {
     return {
       redirect: {
         destination: "/",
@@ -140,16 +178,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 
-  const miliseconds = snapshot.data()
-    ?.created?.seconds * 1000;
+  const miliseconds = snapshot.data()?.created?.seconds * 1000;
   const articles = {
     article: snapshot.data()?.article,
     public: snapshot.data()?.public,
-    created: new Date(miliseconds)
-    .toLocaleDateString(),
+    created: new Date(miliseconds).toLocaleDateString(),
     user: snapshot.data()?.user,
-    articleId: id
-  }
+    articleId: id,
+  };
 
   return {
     props: {

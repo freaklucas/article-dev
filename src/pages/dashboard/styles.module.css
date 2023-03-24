@@ -136,3 +136,8 @@
     margin: 0 8px;
     cursor: pointer;
   }
+
+  .description {
+    color: white;
+    margin: 12px 0 12px 0;
+  }

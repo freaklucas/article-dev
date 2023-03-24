@@ -23,6 +23,7 @@ import {
 } from "firebase/firestore";
 
 import Link from "next/link";
+import Instruction from "@/components/instruction";
 
 interface DashboardProps {
   user: {
@@ -119,8 +120,13 @@ export default function Dashboard({ user }: DashboardProps) {
         <section className={styles.content}>
           <div className={styles.contentForm}>
             <h1 className={styles.title}>
-              Qual título do artigo?
+              Escreva em Markdown :)
             </h1>
+            <Instruction
+              desc="# Título"
+              example="Marque como público para todos possuírem acesso"
+              share="Compartilhe algum artigo público" 
+            />
             <form onSubmit={handleRegisterArticle}>
               <TextArea
                 value={input}
@@ -221,17 +227,3 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 
-export const getStaticProps: GetStaticProps = async () => {
-  const commentRef = collection(db, "comments");
-  const commentSnapshot = await getDocs(commentRef);
-
-  const postRef = collection(db, "articles");
-  const postSnapshot = await getDocs(postRef);
-
-  return {
-    props: {
-      posts: postSnapshot.size || 0,
-      comments: commentSnapshot.size || 0,
-    }
-  }
-}
